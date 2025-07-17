@@ -24,9 +24,6 @@ export function useSubmit(onSubmit: SubmitFunction, onSuccess?: () => void) {
           onSuccess?.();
         }
       } catch (err) {
-        if (err instanceof Error && err.message === "NEXT_REDIRECT") {
-          return;
-        }
         setError("An unknown error occurred. Please try again.");
       } finally {
         setIsLoading(false);

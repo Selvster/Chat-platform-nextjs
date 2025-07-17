@@ -9,7 +9,7 @@ export async function authenticateUser(
 ): Promise<AuthActionResult> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-
+  let valid = false;
   try {
     const result = await authController.processLogin({ email, password });
 
@@ -21,13 +21,17 @@ export async function authenticateUser(
           "Authentication failed. Please check your credentials.",
       };
     }
+    valid = true;
   } catch (error: any) {
     return {
       success: false,
       message: "An unexpected error occurred during authentication.",
     };
   }
-  redirect("/rooms");
+  if (valid) {
+    redirect("/rooms");
+  }
+  return { success: false, message: "Authentication failed." };
 }
 
 export async function signupUser(
@@ -37,7 +41,7 @@ export async function signupUser(
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
   const username = formData.get("username") as string;
-
+  let valid = false;
   try {
     const result = await authController.processSignup({
       email,
@@ -52,13 +56,17 @@ export async function signupUser(
         message: result.message || "Signup failed. Please try again.",
       };
     }
+    valid = true;
   } catch (error: any) {
     return {
       success: false,
       message: "An unexpected error occurred during signup.",
     };
   }
-  redirect("/rooms");
+  if (valid) {
+    redirect("/rooms");
+  }
+  return { success: false, message: "Signup failed." };
 }
 
 export async function logoutUser(): Promise<void> {
