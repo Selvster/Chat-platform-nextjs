@@ -22,5 +22,10 @@ export interface AuthApiResponse {
 export interface AuthActionResult {
   success: boolean;
   message?: string; 
+}
 
+export interface User {
+  _id: string;
+  username: string;
+  email: string;
 }

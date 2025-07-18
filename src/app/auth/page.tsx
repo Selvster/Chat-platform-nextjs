@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 
-import { authenticateUser, signupUser } from './action';
+import { authenticateUser, signupUser } from '../actions';
 import SubmitButton from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import Error from '@/components/common/Error';
