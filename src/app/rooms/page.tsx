@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { logoutUser } from '../auth/action';
 
 interface Room {
   id: string;
@@ -50,9 +51,8 @@ export default function App() {
     router.push('/rooms/join');
   };
 
-  const handleLogout = () => {
-    
-    router.push('/auth'); 
+  const handleLogout = async () => {
+    await logoutUser();
   };
 
   return (

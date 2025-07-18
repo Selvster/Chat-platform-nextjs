@@ -77,8 +77,6 @@ export const authController = {
     if (!authToken) {
       return null;
     }
-    //ToDo: Verify the token and extract user ID
-
-    return "some-user-id-from-token";
+    return authToken; 
   },
 };
