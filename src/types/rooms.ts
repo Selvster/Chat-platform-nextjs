@@ -13,3 +13,9 @@ export interface Room {
 export interface RoomsApiResponseData {
   rooms: Room[];
 }
+
+export interface CreateRoomApiResponse {
+  status: string;
+  message?: string;
+  room?: Room;
+}

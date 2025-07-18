@@ -1,34 +1,29 @@
 'use client';
 
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import Button from '@/components/common/Button';
+import Input from '@/components/common/Input';
+import TextArea from '@/components/common/TextArea';
+import { createRoom } from '@/app/actions/rooms';
+import { useSubmit } from '@/hooks/useSubmit';
+import Error from '@/components/common/Error';
+import Success from '@/components/common/Success';
 
 export default function App() {
   const router = useRouter();
   const [roomName, setRoomName] = useState<string>('');
   const [roomDescription, setRoomDescription] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
+  const [success,setSuccess] = useState<boolean>(false);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setMessage('');
-
-    if (roomName.trim() === '' || roomDescription.trim() === '') {
-      setMessage('Please fill in both room name and description.');
-      return;
-    }
-
-    console.log('Creating room:', { name: roomName, description: roomDescription });
-    setMessage('Room created successfully! (Simulated)');
-
+  const { handleSubmit, isLoading , error} = useSubmit(createRoom, ()=> {
+    setSuccess(true);
     setRoomName('');
     setRoomDescription('');
-
-    // Example: router.push('/rooms');
-  };
+  });
 
   const handleBackToRooms = () => {
-   router.push('/rooms');
+    router.push('/rooms');
   }
 
   return (
@@ -43,47 +38,41 @@ export default function App() {
         <h2 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">Create New Room</h2>
 
 
-        {message && (
-          <div className={`px-4 py-3 rounded-lg relative mb-4 
-            ${message.includes('successfully') ? 'bg-green-100 border-green-400 text-green-700' : 'bg-red-100 border-red-400 text-red-700'}`} role="alert">
-            <span className="block sm:inline">{message}</span>
-          </div>
+        {success && (
+          <Success message="Room created successfully! You can now see it in your rooms list." />
+        )}
+
+        {error && (
+          <Error message={error} />
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label htmlFor="roomName" className="block text-gray-700 text-sm font-medium mb-2">
-              Room Name
-            </label>
-            <input
-              type="text"
-              id="roomName"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 text-gray-800"
-              placeholder="e.g., General Chat, Gaming Lounge"
-              value={roomName}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setRoomName(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="roomDescription" className="block text-gray-700 text-sm font-medium mb-2">
-              Description
-            </label>
-            <textarea
-              id="roomDescription"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 text-gray-800 h-24 resize-none"
-              placeholder="A brief description of the room's purpose."
-              value={roomDescription}
-              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setRoomDescription(e.target.value)}
-              required
-            ></textarea>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 transform hover:scale-105 cursor-pointer"
-          >
-            Create Room
-          </button>
+          <Input
+            id="roomName"
+            type="text"
+            label="Room Name"
+            name="name"
+            placeholder="Enter room name"
+            value={roomName}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setRoomName(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+          <TextArea
+            id="roomDescription"
+            label="Room Description"
+            name="description"
+            placeholder="A brief description of the room's purpose."
+            value={roomDescription}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setRoomDescription(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+          <Button
+            buttonText='Create Room'
+            loadingText='Creating...'
+            isLoading={isLoading}
+          />
         </form>
       </div>
     </div>
