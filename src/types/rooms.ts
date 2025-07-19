@@ -19,3 +19,8 @@ export interface CreateRoomApiResponse {
   message?: string;
   room?: Room;
 }
+
+export interface RoomCredentials {
+  name: string;
+  description: string;
+}
