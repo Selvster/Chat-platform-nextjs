@@ -1,10 +1,8 @@
-
 import { authService } from "@/services/authService";
-import { UserCredentials, AuthActionResult,UserRegisterInput } from "@/types";
-import { cookies } from "next/headers"; 
+import { UserCredentials, AuthActionResult, UserRegisterInput } from "@/types";
+import { cookies } from "next/headers";
 
 export const authController = {
-
   async processLogin(credentials: UserCredentials): Promise<AuthActionResult> {
     if (!credentials.email || !credentials.password) {
       return { success: false, message: "Email and password are required." };
@@ -12,16 +10,21 @@ export const authController = {
 
     try {
       const authData = await authService.login(credentials);
-      (await
-            cookies()).set("auth_token", authData.token, {
-        httpOnly: true, 
-        secure: process.env.NODE_ENV === "production", 
-        maxAge: 60 * 60 * 24 * 7, 
-        path: "/", 
-        sameSite: "lax", 
+      (await cookies()).set("auth_token", authData.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+        sameSite: "lax",
+      });
+      (await cookies()).set("user_id", authData.user.id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+        sameSite: "lax",
       });
 
-     
       return { success: true };
     } catch (error: any) {
       console.error("authController.processLogin error:", error);
@@ -32,11 +35,19 @@ export const authController = {
     }
   },
 
-  async processSignup(credentials: UserRegisterInput): Promise<AuthActionResult> {
-    if (!credentials.email || !credentials.password || !credentials.username || credentials.password !== credentials.confirmPassword) {
+  async processSignup(
+    credentials: UserRegisterInput
+  ): Promise<AuthActionResult> {
+    if (
+      !credentials.email ||
+      !credentials.password ||
+      !credentials.username ||
+      credentials.password !== credentials.confirmPassword
+    ) {
       return {
         success: false,
-        message: "Email, password, username, and matching passwords are required.",
+        message:
+          "Email, password, username, and matching passwords are required.",
       };
     }
 
@@ -44,12 +55,10 @@ export const authController = {
       const authData = await authService.signup({
         email: credentials.email,
         password: credentials.password,
-        username: credentials.username
+        username: credentials.username,
       });
 
-      (await
-
-            cookies()).set("auth_token", authData.token, {
+      (await cookies()).set("auth_token", authData.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 60 * 60 * 24 * 7,
@@ -57,6 +66,13 @@ export const authController = {
         sameSite: "lax",
       });
 
+      (await cookies()).set("user_id", authData.user.id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+        sameSite: "lax",
+      });
       return { success: true };
     } catch (error: any) {
       console.error("authController.processSignup error:", error);
@@ -71,12 +87,11 @@ export const authController = {
     (await cookies()).delete("auth_token");
   },
 
-
   async isAuthenticated(): Promise<string | null> {
     const authToken = (await cookies()).get("auth_token")?.value;
     if (!authToken) {
       return null;
     }
-    return authToken; 
+    return authToken;
   },
 };

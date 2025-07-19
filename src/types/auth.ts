@@ -16,6 +16,9 @@ export interface UserRegisterInput extends UserRegisterCredentials {
 
 export interface AuthApiResponse {
     token: string; 
+    user : {
+      id: string;
+    }
 }
 
 

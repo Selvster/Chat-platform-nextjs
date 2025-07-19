@@ -10,6 +10,10 @@ export interface Room {
   onlineUsers: number; 
 }
 
+export interface RoomWithIsOwner extends Room {
+  isOwner: boolean;
+}
+
 export interface RoomsApiResponseData {
   rooms: Room[];
 }

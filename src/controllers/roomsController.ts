@@ -1,14 +1,20 @@
 import { roomsService } from "@/services/roomsService";
-import { Room, CreateRoomApiResponse } from "@/types";
+import { RoomWithIsOwner, CreateRoomApiResponse } from "@/types";
+import { cookies } from "next/headers";
 
 export const roomsController = {
   async fetchUserRooms(): Promise<{
-    rooms?: Room[];
+    rooms?: RoomWithIsOwner[];
     message?: string;
   }> {
     try {
       const rooms = await roomsService.fetchMyRooms();
-      return { rooms };
+      const userId = (await cookies()).get("user_id")?.value;
+      const roomsWithIsOwner = rooms.map((room) => ({
+        ...room,
+        isOwner: room.owner._id === userId,
+      }));
+      return { rooms: roomsWithIsOwner };
     } catch (error: any) {
       console.error("Error in fetchUserRoomsController:", error);
       return { message: error.message || "Server error fetching your rooms." };
