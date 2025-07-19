@@ -27,7 +27,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-4 font-sans">
+    <div className="flex items-center justify-center">
       <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
         <button
           className="mb-4 text-blue-600 hover:underline flex items-center cursor-pointer"

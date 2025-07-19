@@ -52,7 +52,7 @@ export default function App() {
 
                     {!isLogin && (
                         <Input
-                            label='username'
+                            label='Username'
                             id='username'
                             name='username'
                             type='text'

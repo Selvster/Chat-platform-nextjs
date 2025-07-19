@@ -1,9 +1,12 @@
 import { serverFetch } from "@/libs/authorizedApi";
-import { RoomsApiResponseData, Room, CreateRoomApiResponse, RoomCredentials } from "@/types";
-
+import {
+  RoomsApiResponseData,
+  Room,
+  CreateRoomApiResponse,
+  RoomCredentials,
+} from "@/types";
 
 export const roomsService = {
-
   fetchMyRooms: async (): Promise<Room[]> => {
     const data = await serverFetch<RoomsApiResponseData>("/rooms/my-rooms", {
       method: "GET",
@@ -33,6 +36,26 @@ export const roomsService = {
       throw new Error("API did not return room data upon successful creation.");
     }
 
+    return response.data.room;
+  },
+
+  joinRoom: async (roomCode: string): Promise<Room> => {
+    const response = await serverFetch<CreateRoomApiResponse>(
+      `/rooms/${roomCode}/join`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ roomCode }),
+      }
+    );
+    if (response.status !== "success") {
+      throw new Error(response.message || "API failed to join room.");
+    }
+    if (!response.data?.room) {
+      throw new Error("API did not return room data upon successful join.");
+    }
     return response.data.room;
   },
 };
