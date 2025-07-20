@@ -66,5 +66,36 @@ export const roomsController = {
           "An unexpected error occurred while joining the room.",
       };
     }
+  },
+  async leaveRoom(roomId: string): Promise<boolean> {
+    try {
+      await roomsService.leaveRoom(roomId);
+      return true;
+    } catch (error: any) {
+      console.error("Error in leaveRoomController:", error);
+      return false;
+    }
+  },
+  async editRoom(roomId: string, name: string, description: string): Promise<CreateRoomApiResponse> {
+    try {
+      if (!name || !description) {
+        return {
+          status: "error",
+          message: "Room name and description are required.",
+        };
+      }
+      const updatedRoom = await roomsService.editRoom(roomId, {name, description});
+      return {
+        status: "success",
+        room: updatedRoom,
+      };
+    } catch (error: any) {
+      console.error("Error in editRoomController:", error);
+      return {
+        status: "error",
+        message:
+          error.message || "An unexpected error occurred while editing the room.",
+      };
+    }
   }
 };

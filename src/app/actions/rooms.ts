@@ -1,9 +1,10 @@
 "use server";
 import { roomsController } from "@/controllers/roomsController";
-import { Room, CreateRoomApiResponse } from "@/types";
+import { CreateRoomApiResponse, RoomWithIsOwner } from "@/types";
+import { revalidatePath } from "next/cache";
 
 export async function fetchUserRooms(): Promise<{
-  rooms?: Room[];
+  rooms?: RoomWithIsOwner[];
   message?: string;
 }> {
   return roomsController.fetchUserRooms();
@@ -19,4 +20,24 @@ export async function joinRoom(
   roomCode: string
 ): Promise<CreateRoomApiResponse> {
   return roomsController.joinRoom(roomCode);
+}
+
+export async function leaveRoom(roomId: string): Promise<boolean> {
+  let res = await roomsController.leaveRoom(roomId);
+  if (res) {
+    revalidatePath("/rooms/my-rooms");
+  }
+  return res;
+}
+
+export async function editRoom(
+  id: string,
+  name: string,
+  description: string
+): Promise<CreateRoomApiResponse> {
+  const res = await roomsController.editRoom(id, name, description);
+  if (res.status == "success") {
+    revalidatePath("/rooms/my-rooms");
+  }
+  return res;
 }

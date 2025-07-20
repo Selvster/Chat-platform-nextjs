@@ -1,28 +1,37 @@
-'use client';
-
 import React from 'react';
-
+import { leaveRoom } from '@/app/actions';
+import { showToastAlert } from '@/libs/utils';
 interface LeaveRoomModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
   roomName: string;
+  roomId: string;
 }
 
 export default function LeaveRoomModal({
   isOpen,
   onClose,
-  onConfirm,
   roomName,
+  roomId
 }: LeaveRoomModalProps) {
   if (!isOpen) {
-    return null; 
+    return null;
+  }
+
+  const onConfirm = async () => {
+    const success = await leaveRoom(roomId);
+    if (success) {
+      showToastAlert('success', 'Success!', 'You have left the room.');
+      onClose();
+    } else {
+      showToastAlert('error', 'Error!', 'Failed to leave the room. Please try again later.');
+    }
   }
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4"
-      onClick={onClose} 
+      onClick={onClose}
     >
       <div
         className="bg-white rounded-lg shadow-2xl p-6 md:p-8 w-full max-w-md mx-auto

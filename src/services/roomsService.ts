@@ -58,4 +58,39 @@ export const roomsService = {
     }
     return response.data.room;
   },
+
+  leaveRoom: async (roomId: string): Promise<void> => {
+    const response = await serverFetch<{ message: string }>(
+      `/rooms/${roomId}/leave`,
+      {
+        method: "POST",
+      }
+    );
+    if (response.status !== "success") {
+      throw new Error(response.message || "API failed to leave room.");
+    }
+  },
+
+  editRoom: async (
+    roomId: string,
+    updatedData: RoomCredentials
+  ): Promise<Room> => {
+    const response = await serverFetch<CreateRoomApiResponse>(
+      `/rooms/${roomId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      }
+    );
+    if (response.status !== "success") {
+      throw new Error(response.message || "API failed to edit room.");
+    }
+    if (!response.data?.room) {
+      throw new Error("API did not return room data upon successful edit.");
+    }
+    return response.data.room;
+  },
 };

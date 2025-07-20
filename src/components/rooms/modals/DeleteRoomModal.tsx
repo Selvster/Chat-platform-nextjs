@@ -1,19 +1,17 @@
-'use client';
-
 import React from 'react';
 
 interface DeleteRoomModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
   roomName: string;
+  roomId: string;
 }
 
 export default function DeleteRoomModal({
   isOpen,
   onClose,
-  onConfirm,
   roomName,
+  roomId
 }: DeleteRoomModalProps) {
   if (!isOpen) {
     return null; 
@@ -54,7 +52,7 @@ export default function DeleteRoomModal({
             Cancel
           </button>
           <button
-            onClick={onConfirm}
+            onClick={() => {}}
             className="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold
                        hover:bg-red-700 transition-colors duration-200
                        focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 cursor-pointer"

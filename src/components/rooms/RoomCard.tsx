@@ -1,40 +1,32 @@
 'use client';
-import React, { useState } from 'react';
+import React, {  useReducer } from 'react';
 import { RoomWithIsOwner } from '@/types';
 import { useRouter } from 'next/navigation';
 import Edit from '../icons/Edit';
 import Delete from '../icons/Delete';
 import Leave from '../icons/Leave';
-import DeleteRoomModal from './DeleteRoomModal';
-import LeaveRoomModal from './LeaveRoomModal';
+import ModalsContainer from './ModalsContainer';
+import { modalReducer, initialModalState } from '@/libs/modalReducer';
+
 export default function RoomCard({ room }: { room: RoomWithIsOwner }) {
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+    const [modalState, dispatch] = useReducer(modalReducer, initialModalState);
     const router = useRouter();
     const isOwner = room.isOwner;
-
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
-        setIsDeleteModalOpen(true);
-    };
-    const handleConfirmDelete = () => {
-        console.log(`CONFIRMING DELETION for room: ${room.name} (${room._id})`);
-        setIsDeleteModalOpen(false);
-    };
+        dispatch({ type: 'OPEN_DELETE' });
 
+    };
     const handleEdit = (e: React.MouseEvent) => {
         e.stopPropagation();
-        console.log(`Editing room: ${room.name} (${room._id})`);
+        dispatch({ type: 'OPEN_EDIT' });
     };
 
     const handleLeave = (e: React.MouseEvent) => {
         e.stopPropagation();
-        setIsLeaveModalOpen(true);
+        dispatch({ type: 'OPEN_LEAVE' });
     };
-    const handleConfirmLeave = () => {
-        console.log(`CONFIRMING LEAVE for room: ${room.name} (${room._id})`);
-        setIsLeaveModalOpen(false);
-    }
+
     return (
         <>
             <div
@@ -103,17 +95,10 @@ export default function RoomCard({ room }: { room: RoomWithIsOwner }) {
                     <span>{room.onlineUsers} online</span>
                 </div>
             </div>
-            <DeleteRoomModal
-                isOpen={isDeleteModalOpen}
-                onClose={() => setIsDeleteModalOpen(false)}
-                onConfirm={handleConfirmDelete}
-                roomName={room.name}
-            />
-            <LeaveRoomModal
-                isOpen={isLeaveModalOpen}
-                onClose={() => setIsLeaveModalOpen(false)}
-                onConfirm={handleConfirmLeave}
-                roomName={room.name}
+            <ModalsContainer
+                modalState={modalState}
+                dispatch={dispatch}
+                room={room}
             />
         </>
     );
